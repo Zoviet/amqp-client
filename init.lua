@@ -2,6 +2,7 @@
 -- Copyright (C) 2016 Meng Zhang @ Yottaa,Inc
 -- Copyright (C) 2018 4mig4
 -- Copyright (C) 2019 gsdenys
+-- Copyright (C) 2024 Zoviet @ asustem.ru
 --
 
 local c = require ('amqp.consts')
@@ -25,14 +26,6 @@ local use_cqueues, lfs = pcall(require,"cqueues")
 
 local amqp = {}
 
--- let ngx.socket take precedence to lua socket
---[[
-if _G.ngx and _G.ngx.socket then
-  logger.dbg("[socket] Unsing ngx socket.")
-  socket = _G.ngx.socket
-  tcp = socket.tcp
-else
---]]
 if use_cqueues == true then
   logger.dbg("[socket] Unsing cqueues socket.")
   socket = require('cqueues.socket')
@@ -82,8 +75,6 @@ else
   function amqp:receive(int) return self.sock:receive(int) end
 end
 
--- getopt(key, table, table, ..., value)
--- return the key's value from the first table that has it, or VALUE if none do
 local  function _getopt(k,t,...)
   if select('#',...)==0 then
     return t
@@ -207,8 +198,6 @@ local function sslhandshake(ctx)
 
   return ok, msg -- return
 end
-
-
 
 -- connect to the AMQP server (broker)
 --
@@ -729,7 +718,6 @@ function amqp:consume_loop(callback)
   end
 
   self:teardown()
-  -- return not err or err ~= "exiting", err
   return nil, err or err0
 end
 
