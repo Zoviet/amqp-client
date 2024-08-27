@@ -1,5 +1,23 @@
 # AMQP Client #
 
+***Usage with Lua5.1:***
+
+1. First step
+
+```sh
+luarocks install amqp-client
+```
+
+2. Second Step
+
+Replace /usr/local/share/lua/5.1/amqp/init.lua
+
+```sh
+git clone https://github.com/Zoviet/amqp-client
+cd amqp-client
+sudo cp init.lua /usr/local/share/lua/5.1/amqp/init.lua
+```
+
 Lua Client for AMQP 0.9.1. This library is already tested with RabbitMQ and should work with any other AMQP 0.9.1 broker.
 
 It is a fork of : 
