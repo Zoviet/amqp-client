@@ -7,6 +7,7 @@ It is a fork of :
     https://github.com/4mig4/lua-amqp
     https://github.com/gsdenys/amqp-client
 
+This library can be used with LuaJIT and does not have to be used only in OpenResty.
 
 ***Added Reject, requeue, multiple, queue arguments and remove cqueues connects:***
 
@@ -176,14 +177,8 @@ ctx:teardown()
 ```
 
 
-Lua Client for AMQP 0.9.1. This library is already tested with RabbitMQ and should work with any other AMQP 0.9.1 broker.
+This library is already tested with RabbitMQ and should work with any other AMQP 0.9.1 broker.
 
-It is a fork of : 
-* https://github.com/mengz0/amqp
-* https://github.com/ZigzagAK/amqp
-* https://github.com/4mig4/lua-amqp
-
-This library can be used with LuaJIT and does not have to be used only in OpenResty.
 
 ## Usage
 
