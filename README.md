@@ -1,4 +1,4 @@
-# Lua AMQP Client (RabbitMQ supported)#
+# Lua AMQP Client (support RabbitMQ)
 
 It is a fork of :
 
