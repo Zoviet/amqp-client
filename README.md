@@ -1,5 +1,13 @@
 # AMQP Client #
 
+It is a fork of :
+
+    https://github.com/mengz0/amqp
+    https://github.com/ZigzagAK/amqp
+    https://github.com/4mig4/lua-amqp
+    https://github.com/gsdenys/amqp-client
+
+
 ***Added Reject, requeue, multiple, queue arguments and remove cqueues connects:***
 
 If requeue option sets in false then acknowledgement method sets to NOACK (with multiple option).
