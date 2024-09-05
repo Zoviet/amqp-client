@@ -36,6 +36,8 @@ sudo cp init.lua /usr/local/share/lua/5.1/amqp/init.lua
 
 ```
 
+or just copy ampq to your project.
+
 ### General usage
 
 Consumer config example:
