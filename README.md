@@ -9,6 +9,8 @@ It is a fork of :
 
 This library can be used with LuaJIT and does not have to be used only in OpenResty.
 
+This library use lua socket and ***don't use cqueues***.
+
 ***Added Reject, requeue, multiple, queue arguments and remove cqueues connects:***
 
 If requeue option sets in false then acknowledgement method sets to NOACK (with multiple option).
@@ -258,13 +260,7 @@ To install busted lib >= 2.1 execute the following command:
 luarocks install busted
 ```
 
-This library can use [cqueues](https://luarocks.org/modules/daurnimator/cqueues); once [cqueues](https://luarocks.org/modules/daurnimator/cqueues) is installed the library automatically starts to use it. to install [cqueues](https://luarocks.org/modules/daurnimator/cqueues) use this command.
-
-```sh
-luarocks install cqueues
-```
-
-case you don't want to use cqueues you need to use the lua socket. Install it with this command:
+you need to use the lua socket. Install it with this command:
 
 ```sh
 luarocks install luasocket
