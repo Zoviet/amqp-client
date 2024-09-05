@@ -97,6 +97,8 @@ end
 Logging:
 
 ```
+local logger = require "amqp.logger"
+
 logger.set_level(4) -- logging level for print : ERR   = 4  INFO  = 7  DEBUG = 8
 
 ```
