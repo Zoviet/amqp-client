@@ -2,7 +2,6 @@
 -- Copyright (C) 2016 Meng Zhang @ Yottaa,Inc
 -- Copyright (C) 2018 4mig4
 -- Copyright (C) 2019 gsdenys
--- Copyright (C) 2024 Zoviet @ asustem.ru
 --
 
 local c = require ('amqp.consts')
@@ -26,6 +25,16 @@ local use_cqueues, lfs = pcall(require,"cqueues")
 
 local amqp = {}
 
+use_cqueues = false
+
+-- let ngx.socket take precedence to lua socket
+--[[
+if _G.ngx and _G.ngx.socket then
+  logger.dbg("[socket] Unsing ngx socket.")
+  socket = _G.ngx.socket
+  tcp = socket.tcp
+else
+--]]
 if use_cqueues == true then
   logger.dbg("[socket] Unsing cqueues socket.")
   socket = require('cqueues.socket')
@@ -75,6 +84,8 @@ else
   function amqp:receive(int) return self.sock:receive(int) end
 end
 
+-- getopt(key, table, table, ..., value)
+-- return the key's value from the first table that has it, or VALUE if none do
 local  function _getopt(k,t,...)
   if select('#',...)==0 then
     return t
@@ -198,6 +209,8 @@ local function sslhandshake(ctx)
 
   return ok, msg -- return
 end
+
+
 
 -- connect to the AMQP server (broker)
 --
@@ -577,16 +590,18 @@ end
 --
 
 function amqp:basic_ack(ok, delivery_tag)
+  local method = c.method.basic.REJECT
+  if self.opts.requeue then method = c.method.basic.NOACK end
   local f = frame.new_method_frame(self.channel or 1,
   c.class.BASIC,
-  ok and c.method.basic.ACK or c.method.basic.NACK)
+  ok and c.method.basic.ACK or method)
 
   f.method = {
     delivery_tag = delivery_tag,
-    multiple = false,
-    no_wait = true
+    requeue = self.opts.requeue,
+    multiple = self.opts.multiple,    
+    no_wait = true    
   }
-
   return frame.wire_method_frame(self,f)
 end
 
@@ -718,6 +733,7 @@ function amqp:consume_loop(callback)
   end
 
   self:teardown()
+  -- return not err or err ~= "exiting", err
   return nil, err or err0
 end
 
@@ -834,7 +850,8 @@ function amqp:queue_declare(opts)
     durable = _getopt('durable', opts, self.opts, false),
     exclusive = _getopt('exclusive', opts, self.opts, false),
     auto_delete = _getopt('auto_delete', opts, self.opts, true),
-    no_wait = _getopt('no_wait', opts, self.opts, false)
+    no_wait = _getopt('no_wait', opts, self.opts, false),
+    arguments = _getopt('arguments', opts, self.opts, {})
   }
   return frame.wire_method_frame(self,f)
 end

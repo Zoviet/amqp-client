@@ -1,6 +1,12 @@
 # AMQP Client #
 
-***Usage with Lua5.1:***
+***Added Reject, requeue, multiple, queue arguments and remove cqueues connects:***
+
+If requeue option sets in false then acknowledgement method sets to NOACK (with multiple option).
+
+If requeue option sets in true then acknowledgement method sets to REJECT.
+
+***Usage with Lua>= 5.1:***
 
 1. First step
 
@@ -16,7 +22,149 @@ Replace /usr/local/share/lua/5.1/amqp/init.lua
 git clone https://github.com/Zoviet/amqp-client
 cd amqp-client
 sudo cp init.lua /usr/local/share/lua/5.1/amqp/init.lua
+
 ```
+
+### General usage
+
+Consumer config example:
+
+```
+local args =  {}
+
+args['x-dead-letter-exchange'] = 'test.retry'
+args['x-message-ttl'] = 15000
+
+local ctx = amqp:new({
+    role = 'consumer',
+    exchange = 'test',
+    routing_key = 'test',
+    queue = 'sms',
+    ssl = false,
+    user = 'guest',
+    password = 'guest',
+    no_ack = false,
+    durable = true,
+    auto_delete = false,
+    consumer_tag = '',
+    requeue = false, 
+    multiple = false,
+    exclusive = false,
+    properties = {},
+    arguments = args
+})
+
+```
+
+Consumer loop example:
+
+```
+local ok, err
+ok , err = ctx:connect(host, port)
+if not ok then
+    error('could not connect'..err)
+end
+
+ok, err = ctx:setup() -- because of this we need to use consume_loop()
+if not ok then
+    error('could not setup: '..err)
+end
+
+ok, err = ctx:prepare_to_consume() -- this has to be right after setup()
+if not ok then
+    error('could not prepare to consume: '..err)
+end
+
+local callback = function(f)
+    print(f.frame.routing_key) 
+end
+
+ok, err = ctx:consume_loop(callback)
+print(ok, err)
+
+```
+
+Message rejected when callback breaks with error:
+
+```
+local callback = function(f)
+    print(f.frame.routing_key) 
+    error('test error')
+end
+  
+```
+
+Logging:
+
+```
+logger.set_level(4) -- logging level for print : ERR   = 4  INFO  = 7  DEBUG = 8
+
+```
+
+Publisher loop example:
+
+```
+local ctx
+
+local function connect()	
+	ctx = amqp:new({
+	    role = 'producer',
+	    exchange = 'missed',
+	    routing_key = 'missed',
+	    ssl = false,
+	    user = 'guest',
+	    password = 'guest',
+	    no_ack = false,
+	    channel = 2,
+	    durable = true,	
+	    auto_delete = true,
+	    consumer_tag = '',
+	    exclusive = false,
+	    properties = {}
+	})	
+	local ok1, err = ctx:connect(host, port)		
+	if err then 
+		log.error(err)
+		ctx:close()
+		wait(5)			
+		connect()
+	end
+	local ok, setup_err = ctx:setup()
+	if setup_err then
+		log.error(setup_err) 	
+		ctx:teardown()
+		wait(15)
+		connect()
+	end		
+	log.info('Connected')
+	return ok
+end
+
+local function publish()
+	while (true) do
+		-- Do something
+		local publish_ok, publish_err = ctx:publish(message)	
+		if not publish_ok then 
+			log.error('Publish error : '..publish_err)	
+			ctx:teardown()
+			ctx:close()	
+			wait(1)
+			connect()
+		end
+	end
+end
+
+if connect() then 
+	publish() 
+else
+	ctx:close()
+	error('Not connect to RabbitMq')
+end
+
+ctx:teardown()
+	
+```
+
 
 Lua Client for AMQP 0.9.1. This library is already tested with RabbitMQ and should work with any other AMQP 0.9.1 broker.
 
