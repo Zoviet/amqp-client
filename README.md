@@ -17,7 +17,7 @@ If requeue option sets in false then acknowledgement method sets to NOACK (with 
 
 If requeue option sets in true then acknowledgement method sets to REJECT.
 
-***Usage with Lua>= 5.1:***
+### Install (Lua>= 5.1)
 
 1. First step
 
@@ -178,19 +178,7 @@ ctx:teardown()
 	
 ```
 
-
-This library is already tested with RabbitMQ and should work with any other AMQP 0.9.1 broker.
-
-
-## Usage
-
-As this library is already published at [Luarocks](https://luarocks.org), you can use this through following command:
-
-```sh
-luarocks install amqp-client
-```
-
-then, follow this [Wiki Documentation](https://github.com/gsdenys/amqp-client/wiki) to know how to use this library.
+This library is already tested with RabbitMQ and should work with any other AMQP 0.9.1 broker, follow this [Wiki Documentation](https://github.com/gsdenys/amqp-client/wiki) to know how to use this library.
 
 ## Develop
 
