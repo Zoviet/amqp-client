@@ -11,7 +11,7 @@ This library can be used with LuaJIT and does not have to be used only in OpenRe
 
 This library use lua socket and ***don't use cqueues***.
 
-***Added Reject, requeue, multiple, queue arguments and remove cqueues connects:***
+***Added reject, requeue, multiple, queue arguments and remove cqueues connects:***
 
 If requeue option sets in false then acknowledgement method sets to NOACK (with multiple option).
 
@@ -56,6 +56,7 @@ local ctx = amqp:new({
     ssl = false,
     user = 'guest',
     password = 'guest',
+    virtual_host = '/',
     no_ack = false,
     durable = true,
     auto_delete = false,
@@ -129,6 +130,7 @@ local function connect()
 	    ssl = false,
 	    user = 'guest',
 	    password = 'guest',
+	    virtual_host = '/',
 	    no_ack = false,
 	    channel = 2,
 	    durable = true,	
